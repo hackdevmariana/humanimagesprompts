@@ -1,7 +1,7 @@
 # prompt-compiler Specification
 
 ## Purpose
-TBD - created by archiving change prompt-engine-mvp. Update Purpose after archive.
+Compile active block data into a plain-text AI image-generation prompt via POST /api/compile, display the result in an editable textarea, and provide a copy-to-clipboard action with a confirmation toast. Includes a live preview panel that updates reactively as blocks change. Built as part of the `frontend-dashboard` change.
 ## Requirements
 ### Requirement: Compile active blocks into a plain-text prompt
 The system SHALL merge data from all active blocks into a single editable plain-text prompt string. Inactive blocks SHALL be excluded from the compiled output.
