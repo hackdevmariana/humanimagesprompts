@@ -1,5 +1,5 @@
 import type { CompileResult } from '@/types/api';
-import type { BlockKey } from '@/stores/dashboard';
+import { CANONICAL_BLOCK_ORDER, type BlockKey } from '@/stores/dashboard';
 
 export const useCompile = () => {
   const dashboard = useDashboardStore();
@@ -22,7 +22,8 @@ export const useCompile = () => {
 
   function gatherComposition(): Record<string, unknown> {
     const composition: Record<string, unknown> = {};
-    for (const key of dashboard.activeBlocks) {
+    for (const key of CANONICAL_BLOCK_ORDER) {
+      if (!dashboard.activeBlocks.includes(key)) continue;
       const fn = activeBlocksMap[key];
       if (fn) {
         composition[key] = fn();
