@@ -258,7 +258,7 @@ export interface Scene {
   environment_type: string;
   location_details: string;
   camera_and_lens: Record<string, unknown>;
-  weather_and_atmosphere: Record<string, unknown>;
+  weather_and_atmosphere?: Record<string, unknown>;
   lighting_id?: UUID | null;
   created_at?: string;
   updated_at?: string;
