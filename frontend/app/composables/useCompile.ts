@@ -8,6 +8,7 @@ export const useCompile = () => {
   const pose = usePoseStore();
   const scene = useSceneStore();
   const lighting = useLightingStore();
+  const time = useTimeStore();
 
   const building = ref(false);
   const result = ref<CompileResult | null>(null);
@@ -18,6 +19,7 @@ export const useCompile = () => {
     pose: () => pose.data as Record<string, unknown>,
     scene: () => scene.data as Record<string, unknown>,
     lighting: () => lighting.data as Record<string, unknown>,
+    time: () => time.data as Record<string, unknown>,
   };
 
   function gatherComposition(): Record<string, unknown> {
