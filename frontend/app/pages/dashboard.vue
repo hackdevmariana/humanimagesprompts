@@ -7,7 +7,7 @@
 
       <div class="flex-1 overflow-y-auto scrollbar-thin p-6">
         <div
-          v-if="activeKeys.length === 0"
+          v-if="activeOrderedKeys.length === 0"
           class="flex h-full flex-col items-center justify-center gap-3 py-12 text-center"
         >
           <div class="flex h-14 w-14 items-center justify-center rounded-full bg-stone-100 dark:bg-stone-900">
@@ -25,24 +25,10 @@
           </UiButton>
         </div>
 
-        <div
+        <BlockDraggable
           v-else
-          class="space-y-4"
-        >
-          <transition-group
-            name="editor-fade"
-            enter-active-class="transition ease-out duration-200"
-            enter-from-class="opacity-0 translate-y-2"
-            enter-to-class="opacity-100 translate-y-0"
-            move-class="transition-all duration-200"
-          >
-            <BlockEditor
-              v-for="key in activeKeys"
-              :key="key"
-              :block-key="key"
-            />
-          </transition-group>
-        </div>
+          v-model:items="activeOrderedKeys"
+        />
       </div>
 
       <RightPanel class="w-96 border-l border-stone-200 dark:border-stone-800" />
@@ -53,18 +39,26 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
 import { PhSquaresFour } from '@phosphor-icons/vue';
+import { CANONICAL_BLOCK_ORDER, type BlockKey } from '@/stores/dashboard';
 
 const BlocksIcon = PhSquaresFour;
 
 const dashboard = useDashboardStore();
-const { activeBlocks } = storeToRefs(dashboard);
+const { activeBlocks, uiOrder } = storeToRefs(dashboard);
 
-const activeKeys = computed(() => activeBlocks.value);
+const activeOrderedKeys = computed({
+  get: () => uiOrder.value.filter(key => activeBlocks.value.includes(key)),
+  set: (value: string[]) => {
+    const activeSet = new Set<string>(value);
+    const rest = uiOrder.value.filter(key => !activeSet.has(key));
+    dashboard.setUiOrder([...value, ...rest] as BlockKey[]);
+  },
+});
 
 function activateAll() {
-  for (const key of ['character', 'pose', 'outfit', 'scene', 'lighting']) {
-    if (!activeBlocks.value.includes(key as any)) {
-      dashboard.toggleBlock(key as any);
+  for (const key of CANONICAL_BLOCK_ORDER) {
+    if (!activeBlocks.value.includes(key)) {
+      dashboard.toggleBlock(key);
     }
   }
 }
