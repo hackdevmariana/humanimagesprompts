@@ -10,6 +10,7 @@ use App\Entity\Outfit;
 use App\Entity\Pose;
 use App\Entity\PromptComposition;
 use App\Entity\Scene;
+use App\Entity\TimeWeather;
 use App\Enum\CompositionStatusEnum;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
@@ -25,6 +26,12 @@ class AppFixtures extends Fixture
             ->setKeyLightDirection('SIDE_45')
             ->setHardness('SOFT_DIFFUSED')
             ->setModifiers(['diffusion' => 'softbox']);
+
+        $timeWeather = new TimeWeather();
+        $timeWeather
+            ->setSeason('SUMMER')
+            ->setTimeOfDay('GOLDEN_HOUR')
+            ->setWeather('CLEAR');
 
         $garment = new Garment();
         $garment
@@ -138,7 +145,7 @@ class AppFixtures extends Fixture
             ->setPose($pose)
             ->setScene($scene);
 
-        foreach ([$lighting, $garment, $garmentSlot, $outfit, $pose, $scene, $character, $composition] as $entity) {
+        foreach ([$lighting, $timeWeather, $garment, $garmentSlot, $outfit, $pose, $scene, $character, $composition] as $entity) {
             $manager->persist($entity);
         }
 
