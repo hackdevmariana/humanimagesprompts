@@ -5,7 +5,7 @@ namespace App\Tests\Functional;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 
 /**
- * Generic CRUD coverage for the five asset domains. A single data provider
+ * Generic CRUD coverage for the six asset domains. A single data provider
  * drives Create → Read → Update → Delete against /api/{collection}/{id}.
  */
 class DomainCrudTest extends DatabaseTestCase
@@ -109,6 +109,11 @@ class DomainCrudTest extends DatabaseTestCase
                 'lightings', 'setup_type',
                 ['setup_type' => 'GOLDEN_HOUR', 'color_temperature' => 'WARM_2700K'], 'GOLDEN_HOUR',
                 ['setup_type' => 'STUDIO_SOFTBOX', 'color_temperature' => 'COOL_5600K'], 'STUDIO_SOFTBOX',
+            ],
+            'time-weather' => [
+                'time-weather', 'season',
+                ['season' => 'SUMMER', 'time_of_day' => 'GOLDEN_HOUR', 'weather' => 'CLEAR'], 'SUMMER',
+                ['season' => 'WINTER', 'time_of_day' => 'NIGHT'], 'WINTER',
             ],
         ];
     }
