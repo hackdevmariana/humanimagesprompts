@@ -45,6 +45,7 @@ import {
   PhTShirt,
   PhFilmSlate,
   PhSunDim,
+  PhClock,
 } from '@phosphor-icons/vue';
 
 const dashboard = useDashboardStore();
@@ -55,12 +56,14 @@ const LightningIcon = PhLightning;
 const ShirtIcon = PhTShirt;
 const SceneIcon = PhFilmSlate;
 const SunDimIcon = PhSunDim;
+const ClockIcon = PhClock;
 
 const blocks = [
   { key: 'character' as const, label: 'Personaje', icon: UserCircleIcon },
   { key: 'outfit' as const, label: 'Outfit', icon: ShirtIcon },
   { key: 'pose' as const, label: 'Pose', icon: LightningIcon },
   { key: 'scene' as const, label: 'Escenario', icon: SceneIcon },
+  { key: 'time' as const, label: 'Tiempo', icon: ClockIcon },
   { key: 'lighting' as const, label: 'Iluminación', icon: SunDimIcon },
 ];
 
