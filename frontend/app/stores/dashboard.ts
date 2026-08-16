@@ -3,9 +3,12 @@ import { defineStore } from 'pinia';
 
 export type BlockKey = 'character' | 'pose' | 'outfit' | 'scene' | 'lighting';
 
+export const CANONICAL_BLOCK_ORDER: BlockKey[] = ['character', 'pose', 'outfit', 'scene', 'lighting'];
+
 export const useDashboardStore = defineStore('dashboard', {
   state: () => ({
-    activeBlocks: ['character', 'outfit', 'pose', 'scene', 'lighting'] as BlockKey[],
+    activeBlocks: ['character', 'pose', 'outfit', 'scene', 'lighting'] as BlockKey[],
+    uiOrder: [...CANONICAL_BLOCK_ORDER] as BlockKey[],
     targetModelHint: 'FLUX_1_DEV' as string,
     currentCompositionId: null as string | null,
     appliedOverrides: [] as Array<{ target_path: string; overridden_value: unknown }>,
@@ -36,6 +39,10 @@ export const useDashboardStore = defineStore('dashboard', {
       } else {
         this.activeBlocks.push(key);
       }
+    },
+
+    setUiOrder(order: BlockKey[]) {
+      this.uiOrder = order;
     },
 
     setTargetModelHint(hint: string) {
