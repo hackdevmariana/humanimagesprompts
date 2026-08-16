@@ -299,6 +299,41 @@ class PromptCompilerTest extends TestCase
         $this->assertEquals('TYPE_III', $result['character']['skin_profile']['fitzpatrick_scale']);
     }
 
+    public function testCompileIncludesTimeBlockAfterScene(): void
+    {
+        $composition = [
+            'character' => ['gender' => 'FEMALE', 'age' => 25, 'ethnicity' => 'CAUCASIAN'],
+            'outfit' => ['style_category' => 'CASUAL', 'layers' => []],
+            'pose' => ['category' => 'STANDING', 'body_language' => 'Standing', 'facial_expression' => 'NEUTRAL', 'expression_intensity' => 5, 'required_framing' => 'MEDIUM_SHOT'],
+            'scene' => ['environment_type' => 'URBAN', 'location_details' => 'City street'],
+            'time' => [
+                'season' => 'SUMMER',
+                'time_of_day' => 'GOLDEN_HOUR',
+                'weather' => 'SUNNY',
+            ],
+        ];
+
+        $result = $this->compiler->compile($composition, 'test-composition-id', 'FLUX_1_DEV');
+
+        $this->assertArrayHasKey('time', $result['canonical']);
+        $this->assertStringContainsString('Time: summer, golden hour, sunny day.', $result['compiled_text']);
+    }
+
+    public function testCompileOmitsTimeBlockWhenAbsent(): void
+    {
+        $composition = [
+            'character' => ['gender' => 'FEMALE', 'age' => 25, 'ethnicity' => 'CAUCASIAN'],
+            'outfit' => ['style_category' => 'CASUAL', 'layers' => []],
+            'pose' => ['category' => 'STANDING', 'body_language' => 'Standing', 'facial_expression' => 'NEUTRAL', 'expression_intensity' => 5, 'required_framing' => 'MEDIUM_SHOT'],
+            'scene' => ['environment_type' => 'URBAN', 'location_details' => 'City street'],
+        ];
+
+        $result = $this->compiler->compile($composition, 'test-composition-id', 'FLUX_1_DEV');
+
+        $this->assertArrayNotHasKey('time', $result['canonical']);
+        $this->assertStringNotContainsString('Time:', $result['compiled_text']);
+    }
+
     public function testBuildTextHandlesMissingOptionalFields(): void
     {
         $canonical = [
