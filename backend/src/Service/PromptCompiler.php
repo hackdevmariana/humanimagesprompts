@@ -29,7 +29,7 @@ class PromptCompiler
     private function normalizeCanonical(array $composition): array
     {
         $canonical = [];
-        foreach (['character', 'outfit', 'pose', 'scene'] as $key) {
+        foreach (['character', 'outfit', 'pose', 'scene', 'time'] as $key) {
             if (isset($composition[$key])) {
                 $canonical[$key] = $this->normalizeBlock($key, $composition[$key]);
             }
@@ -92,6 +92,9 @@ class PromptCompiler
         }
         if (isset($canonical['scene'])) {
             $parts[] = $this->sceneText($canonical['scene']);
+        }
+        if (isset($canonical['time'])) {
+            $parts[] = $this->timeText($canonical['time']);
         }
 
         return trim(implode(' ', $parts) . ' ' . $this->modelTail($target));
@@ -241,6 +244,14 @@ class PromptCompiler
         return $text . '.';
     }
 
+    private function timeText(array $t): string
+    {
+        $season = $this->label($t['season'] ?? 'SPRING');
+        $timeOfDay = $this->label($t['time_of_day'] ?? 'MORNING');
+        $weather = $this->label($t['weather'] ?? 'CLEAR');
+        return "Time: {$season}, {$timeOfDay}, {$weather} day.";
+    }
+
     private function colorText(?array $palette): string
     {
         if (!$palette) {
@@ -319,6 +330,19 @@ class PromptCompiler
             'SMALL' => 'small', 'MEDIUM' => 'medium', 'LARGE' => 'large',
             'WIDE_SET' => 'wide-set', 'CLOSE_SET' => 'close-set', 'HOODED' => 'hooded',
             'STRAIGHT' => 'straight', 'CONTOURED' => 'natural', 'OVERSIZED' => 'oversized',
+            'SPRING' => 'spring', 'SUMMER' => 'summer', 'AUTUMN' => 'autumn', 'WINTER' => 'winter',
+            'DEAD_NIGHT' => 'dead of night', 'SMALL_HOURS' => 'small hours', 'BLUE_HOUR' => 'blue hour',
+            'SUNRISE' => 'sunrise', 'MORNING' => 'morning', 'LATE_MORNING' => 'late morning',
+            'NOON' => 'noon', 'AFTERNOON' => 'afternoon', 'SUNSET' => 'sunset', 'DUSK' => 'dusk',
+            'TWILIGHT' => 'twilight', 'NIGHT' => 'night',
+            'SUNNY' => 'sunny', 'CLEAR' => 'clear', 'PARTLY_CLOUDY' => 'partly cloudy', 'CLOUDY' => 'cloudy',
+            'RAINY' => 'rainy', 'DRIZZLY' => 'drizzly', 'STORMY' => 'stormy', 'SHOWERY' => 'showery',
+            'SNOWY' => 'snowy', 'SLEET' => 'sleet', 'HAIL' => 'hail', 'FOGGY' => 'foggy', 'MISTY' => 'misty',
+            'WINDY' => 'windy', 'GUSTY' => 'gusty', 'DUSTY' => 'dusty', 'HAZY' => 'hazy', 'HUMID' => 'humid',
+            'MUGGY' => 'muggy', 'ICY' => 'icy', 'COLD' => 'cold', 'COOL' => 'cool', 'MILD' => 'mild',
+            'HOT' => 'hot', 'VERY_HOT' => 'very hot', 'THUNDERSTORM' => 'thunderstorm', 'RAINBOW' => 'rainbow',
+            'ICE' => 'ice', 'DEW' => 'dew', 'FROST' => 'frost', 'VARIABLE' => 'variable', 'UNSTABLE' => 'unstable',
+            'CHANGING' => 'changing',
         ];
 
         $key = strtoupper((string) $token);
