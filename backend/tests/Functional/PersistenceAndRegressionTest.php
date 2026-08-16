@@ -8,18 +8,11 @@ use App\Entity\Pose;
 use App\Entity\PromptComposition;
 use App\Entity\Scene;
 use App\Enum\CompositionStatusEnum;
-use App\Service\PromptCompiler;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\SchemaTool;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class PersistenceAndRegressionTest extends WebTestCase
+class PersistenceAndRegressionTest extends DatabaseTestCase
 {
-    private EntityManagerInterface $em;
-    private SchemaTool $schemaTool;
-    private KernelBrowser $client;
-
     /** @var list<string> */
     private const EXPECTED_TABLES = [
         'character',
@@ -34,22 +27,6 @@ class PersistenceAndRegressionTest extends WebTestCase
 
     private const UUID_V4 = '/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i';
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        // Booting the kernel once per test also gives us the HTTP client and the
-        // in-memory SQLite database connection (via the test container below).
-        $this->client = static::createClient();
-
-        $this->em = self::getContainer()->get('doctrine.orm.entity_manager');
-        $this->schemaTool = new SchemaTool($this->em);
-
-        $classes = $this->em->getMetadataFactory()->getAllMetadata();
-        $this->schemaTool->dropSchema($classes);
-        $this->schemaTool->createSchema($classes);
-    }
-
     public function testEightTablesAreCreatedFromMappings(): void
     {
         $tables = array_map(
@@ -63,8 +40,7 @@ class PersistenceAndRegressionTest extends WebTestCase
     public function testMappingSchemaIsInSyncWithMigrations(): void
     {
         // getUpdateSchemaSql() returns the DDL needed to bring the database in line with the
-        // mappings; an empty list means the schema created in setUp has no pending changes,
-        // i.e. the Doctrine mappings are fully in sync with the database schema.
+        // mappings; an empty list means the schema created in setUp has no pending changes.
         $classes = $this->em->getMetadataFactory()->getAllMetadata();
         $diffSql = (new SchemaTool($this->em))->getUpdateSchemaSql($classes);
 
@@ -141,7 +117,7 @@ class PersistenceAndRegressionTest extends WebTestCase
         $this->em->persist($composition);
         $this->em->flush();
 
-        $compiler = self::getContainer()->get(PromptCompiler::class);
+        $compiler = self::getContainer()->get(\App\Service\PromptCompiler::class);
         $result = $compiler->compile(
             ['character' => ['name' => 'Luna']],
             $composition->getId(),
@@ -154,20 +130,59 @@ class PersistenceAndRegressionTest extends WebTestCase
 
     public function testCompileRouteGrantsAuthenticatedUserAndDeniesAnonymous(): void
     {
-        // Regression for the IS_AUTHENTICATED_REMEMBERING (note the trailing -ING) typo that
-        // previously made the firewall deny *every* authenticated /api request with 403.
+        // Regression for the IS_AUTHENTICATED_REMEMBERING (trailing -ING) typo that previously
+        // made the firewall deny *every* authenticated /api request with 403.
         $client = $this->client;
 
-        // Anonymous => denied (not 200)
         $client->request('POST', '/api/compile', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode(['composition' => ['character' => ['name' => 'Luna']]]));
         self::assertContains($client->getResponse()->getStatusCode(), [401, 403]);
 
-        // Login => authenticated session
         $client->request('POST', '/api/login', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode(['email' => 'admin@example.com', 'password' => 'password']));
         self::assertSame(200, $client->getResponse()->getStatusCode());
 
-        // Authenticated => granted (200), the regression that was 403 under the -ING typo
         $client->request('POST', '/api/compile', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode(['composition' => ['character' => ['name' => 'Luna']]]));
         self::assertSame(200, $client->getResponse()->getStatusCode());
+    }
+
+    public function testCompileLoadsPersistedCompositionFromDatabase(): void
+    {
+        // Phase C regression: POST /api/compile resolves composition_id against a persisted
+        // PromptComposition + its character and feeds the real saved values to the compiler.
+        $character = (new Character())
+            ->setName('Elena')
+            ->setGender('FEMALE')
+            ->setAge(26)
+            ->setEthnicity('CAUCASIAN');
+
+        $scene = (new Scene())
+            ->setTitle('Golden hour rooftop')
+            ->setEnvironmentType('URBAN')
+            ->setLocationDetails('roof');
+
+        foreach ([$character, $scene] as $entity) {
+            $this->em->persist($entity);
+        }
+
+        $composition = (new PromptComposition())
+            ->setTitle('Elena golden hour')
+            ->setUserId('test-user')
+            ->setStatus(CompositionStatusEnum::DRAFT)
+            ->setTargetModelHint('FLUX_1_DEV')
+            ->setCharacter($character)
+            ->setScene($scene);
+
+        $this->em->persist($composition);
+        $this->em->flush();
+
+        $client = $this->client;
+        $this->login($client);
+
+        $client->request('POST', '/api/compile', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode(['composition_id' => $composition->getId()]));
+        self::assertSame(200, $client->getResponse()->getStatusCode());
+
+        $body = json_decode($client->getResponse()->getContent(), true);
+        self::assertSame($composition->getId(), $body['meta']['composition_id']);
+        // The persisted character's age (26) was hydrated from the database into the compiled prompt.
+        self::assertStringContainsString('26-year-old', $body['compiled_text']);
     }
 }
