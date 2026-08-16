@@ -11,10 +11,6 @@ const EMPTY_SCENE = {
     depth_of_field: 'SHALLOW_BOKEH',
     film_grain: 'SUBTLE_35MM',
   },
-  weather_and_atmosphere: {
-    weather: 'CLEAR',
-    time_of_day: 'DAY',
-  },
   lighting_id: null,
 };
 
