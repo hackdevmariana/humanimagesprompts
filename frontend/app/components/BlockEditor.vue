@@ -102,6 +102,7 @@ import PoseEditor from './editor/PoseEditor.vue';
 import OutfitEditor from './editor/OutfitEditor.vue';
 import SceneEditor from './editor/SceneEditor.vue';
 import LightingEditor from './editor/LightingEditor.vue';
+import TimeWeatherEditor from './editor/TimeWeatherEditor.vue';
 
 const DiceIcon = PhDiceFive;
 const SaveIcon = PhFloppyDisk;
@@ -135,6 +136,7 @@ function getStore() {
     case 'outfit': return useOutfitStore();
     case 'scene': return useSceneStore();
     case 'lighting': return useLightingStore();
+    case 'time': return useTimeStore();
     default: return null;
   }
 }
@@ -146,6 +148,7 @@ const blockLabel = computed(() => {
     pose: 'Pose',
     scene: 'Escenario',
     lighting: 'Iluminación',
+    time: 'Tiempo',
   };
   return labels[props.blockKey] ?? props.blockKey;
 });
@@ -157,6 +160,7 @@ const editorComponent = computed(() => {
     case 'outfit': return OutfitEditor;
     case 'scene': return SceneEditor;
     case 'lighting': return LightingEditor;
+    case 'time': return TimeWeatherEditor;
     default: return CharacterEditor;
   }
 });
