@@ -1,5 +1,5 @@
 import type { BlockKey } from '@/stores/dashboard';
-import type { Character, Lighting, Pose, Scene } from '@/types/api';
+import type { Character, Lighting, Pose, Scene, TimeWeather } from '@/types/api';
 
 const pick = <T,>(arr: readonly T[]): T => arr[Math.floor(Math.random() * arr.length)] as T;
 
@@ -79,6 +79,10 @@ const setups = ['GOLDEN_HOUR', 'BLUE_HOUR', 'STUDIO_SOFTBOX', 'STUDIO_HARSHELL',
 const temperatures = ['WARM_2700K', 'WARM_3200K', 'NEUTRAL_4500K', 'COOL_5600K', 'COOL_7000K'] as const;
 const directions = ['FRONT', 'SIDE_45', 'SIDE_90', 'BACK_45', 'OVERHEAD', 'UNDER'] as const;
 const hardnesses = ['SOFT_DIFFUSED', 'SEMI_SOFT', 'HARD_SHADOW', 'CONTRAST'] as const;
+
+const seasons = ['SPRING', 'SUMMER', 'AUTUMN', 'WINTER'] as const;
+const dayTimes = ['DEAD_NIGHT', 'SMALL_HOURS', 'BLUE_HOUR', 'SUNRISE', 'GOLDEN_HOUR', 'MORNING', 'LATE_MORNING', 'NOON', 'AFTERNOON', 'SUNSET', 'DUSK', 'TWILIGHT', 'NIGHT'] as const;
+const dayWeathers = ['SUNNY', 'CLEAR', 'PARTLY_CLOUDY', 'CLOUDY', 'OVERCAST', 'RAINY', 'DRIZZLY', 'STORMY', 'SHOWERY', 'SNOWY', 'SLEET', 'HAIL', 'FOGGY', 'MISTY', 'WINDY', 'GUSTY', 'DUSTY', 'HAZY', 'HUMID', 'MUGGY', 'ICY', 'COLD', 'COOL', 'MILD', 'HOT', 'VERY_HOT', 'THUNDERSTORM', 'RAINBOW', 'ICE', 'DEW', 'FROST', 'VARIABLE', 'UNSTABLE', 'CHANGING'] as const;
 
 function randomHairline(): string {
   const walker = pick(walkers);
@@ -204,6 +208,14 @@ function randomLighting(): Lighting {
   };
 }
 
+function randomTime(): TimeWeather {
+  return {
+    season: pick(seasons),
+    time_of_day: pick(dayTimes),
+    weather: pick(dayWeathers),
+  };
+}
+
 export const useRandom = () => {
   function randomize(blockKey: BlockKey) {
     switch (blockKey) {
@@ -225,6 +237,11 @@ export const useRandom = () => {
       case 'lighting': {
         const store = useLightingStore();
         store.data = randomLighting();
+        break;
+      }
+      case 'time': {
+        const store = useTimeStore();
+        store.data = randomTime();
         break;
       }
       case 'outfit':
