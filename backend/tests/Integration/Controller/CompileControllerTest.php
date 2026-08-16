@@ -104,6 +104,21 @@ class CompileControllerTest extends WebTestCase
         self::assertMatchesRegularExpression(self::UUID_V4, $result['body']['meta']['composition_id']);
     }
 
+    public function testAuthenticatedCompileIncludesTimeBlock(): void
+    {
+        $client = static::createClient();
+        $this->login($client);
+
+        $result = $this->compile(
+            $client,
+            json_encode(['composition' => ['time' => ['season' => 'WINTER', 'time_of_day' => 'NIGHT', 'weather' => 'SNOWY']]])
+        );
+
+        self::assertSame(200, $result['status']);
+        self::assertArrayHasKey('time', $result['body']['canonical']);
+        self::assertStringContainsString('Time: winter, night, snowy day.', $result['body']['compiled_text']);
+    }
+
     public function testOptionsPreflightCompile(): void
     {
         $client = static::createClient();
