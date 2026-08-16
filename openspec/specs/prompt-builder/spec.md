@@ -1,7 +1,7 @@
 # prompt-builder Specification
 
 ## Purpose
-TBD - created by archiving change prompt-engine-mvp. Update Purpose after archive.
+Five independent, toggleable prompt-block editors (Personaje, Pose, Outfit, Escenario, Iluminacion) built as Vue 3 components backed by per-block Pinia stores. Each block can be activated/deactivated independently; deactivating hides the editor and excludes its data from compilation. Built as part of the `frontend-dashboard` change.
 ## Requirements
 ### Requirement: Five toggleable prompt-block editors
 The UI SHALL present five independent, toggleable editors: Personaje, Pose, Outfit, Escenario, Iluminacion. Each editor SHALL be independently activatable or deactivatable, and deactivating a block SHALL NOT mutate its stored data.
