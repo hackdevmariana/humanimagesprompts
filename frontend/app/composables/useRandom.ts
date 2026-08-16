@@ -72,8 +72,6 @@ const focalLengths = ['LENS_35MM_WIDE', 'LENS_50MM_NORMAL', 'LENS_85MM_PORTRAIT'
 const apertures = ['F_1_2', 'F_1_4', 'F_1_8', 'F_2_8', 'F_4', 'F_5_6', 'F_8', 'F_11'] as const;
 const dofs = ['SHALLOW_BOKEH', 'MODERATE', 'DEEP'] as const;
 const filmGrains = ['NONE', 'SUBTLE_35MM', 'MEDIUM_35MM', 'HEAVY_35MM', 'VINTAGE_8MM'] as const;
-const weathers = ['CLEAR', 'PARTLY_CLOUDY', 'OVERCAST', 'RAIN', 'SNOW', 'FOG'] as const;
-const timeOfDays = ['DAY', 'DUSK', 'GOLDEN_HOUR', 'BLUE_HOUR', 'NIGHT'] as const;
 
 const setups = ['GOLDEN_HOUR', 'BLUE_HOUR', 'STUDIO_SOFTBOX', 'STUDIO_HARSHELL', 'WINDOW_LIGHT', 'NEON', 'CANDLELIGHT'] as const;
 const temperatures = ['WARM_2700K', 'WARM_3200K', 'NEUTRAL_4500K', 'COOL_5600K', 'COOL_7000K'] as const;
@@ -189,10 +187,6 @@ function randomScene(): Scene {
       aperture: pick(apertures),
       depth_of_field: pick(dofs),
       film_grain: pick(filmGrains),
-    },
-    weather_and_atmosphere: {
-      weather: pick(weathers),
-      time_of_day: pick(timeOfDays),
     },
     lighting_id: null,
   };
