@@ -4,9 +4,9 @@ export interface Toast {
   type: 'success' | 'error' | 'info';
 }
 
-export const useToast = () => {
-  const toasts = ref<Toast[]>([]);
+const toasts = ref<Toast[]>([]);
 
+export const useToast = () => {
   const push = (toast: Omit<Toast, 'id'>, duration = 4000) => {
     const id = Date.now();
     toasts.value.push({ id, ...toast });
