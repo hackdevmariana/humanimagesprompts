@@ -52,9 +52,15 @@ export type FramingEnum = 'CLOSE_UP' | 'MEDIUM_SHOT' | 'FULL_BODY';
 
 export type EnvironmentEnum = 'INDOOR' | 'OUTDOOR' | 'STUDIO' | 'URBAN' | 'NATURE' | 'ABSTRACT';
 
-export type LightingSetupEnum = 'REMBRANDT' | 'BUTTERFLY' | 'SOFTBOX_STUDIO' | 'NATURAL_SUNLIGHT' | 'NEON_CYBERPUNK' | 'GOLDEN_HOUR' | 'DRAMATIC_SPLIT' | 'GOLDEN_HOUR' | 'OVERCAST' | 'STUDIO_SOFTBOX' | 'NATURAL_WINDOW';
+export type LightingSetupEnum = 'REMBRANDT' | 'BUTTERFLY' | 'SOFTBOX_STUDIO' | 'NATURAL_SUNLIGHT' | 'NEON_CYBERPUNK' | 'GOLDEN_HOUR' | 'DRAMATIC_SPLIT' | 'OVERCAST' | 'STUDIO_SOFTBOX' | 'NATURAL_WINDOW';
 
-export type ColorTemperatureEnum = 'WARM_2700K' | 'NEUTRAL_5000K' | 'COOL_6500K' | 'WARM_2700K' | 'COOL_5600K' | 'DAYLIGHT';
+export type ColorTemperatureEnum = 'WARM_2700K' | 'NEUTRAL_5000K' | 'COOL_6500K' | 'COOL_5600K' | 'DAYLIGHT';
+
+export type SeasonEnum = 'SPRING' | 'SUMMER' | 'AUTUMN' | 'WINTER';
+
+export type TimeOfDayEnum = 'DEAD_NIGHT' | 'SMALL_HOURS' | 'BLUE_HOUR' | 'SUNRISE' | 'GOLDEN_HOUR' | 'MORNING' | 'LATE_MORNING' | 'NOON' | 'AFTERNOON' | 'SUNSET' | 'DUSK' | 'TWILIGHT' | 'NIGHT';
+
+export type WeatherEnum = 'SUNNY' | 'CLEAR' | 'PARTLY_CLOUDY' | 'CLOUDY' | 'OVERCAST' | 'RAINY' | 'DRIZZLY' | 'STORMY' | 'SHOWERY' | 'SNOWY' | 'SLEET' | 'HAIL' | 'FOGGY' | 'MISTY' | 'WINDY' | 'GUSTY' | 'DUSTY' | 'HAZY' | 'HUMID' | 'MUGGY' | 'ICY' | 'COLD' | 'COOL' | 'MILD' | 'HOT' | 'VERY_HOT' | 'THUNDERSTORM' | 'RAINBOW' | 'ICE' | 'DEW' | 'FROST' | 'VARIABLE' | 'UNSTABLE' | 'CHANGING';
 
 export interface ColorPalette {
   color_name: string;
@@ -237,6 +243,15 @@ export interface Lighting {
   updated_at?: string;
 }
 
+export interface TimeWeather {
+  id?: UUID;
+  season: string;
+  time_of_day: string;
+  weather: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
 export interface Scene {
   id?: UUID;
   title: string;
@@ -269,7 +284,7 @@ export interface MutationOverride {
   reason?: string;
 }
 
-export type AssetType = 'character' | 'pose' | 'outfit' | 'scene' | 'lighting';
+export type AssetType = 'character' | 'pose' | 'outfit' | 'scene' | 'lighting' | 'time-weather';
 
 export interface SearchResult {
   type: AssetType;
