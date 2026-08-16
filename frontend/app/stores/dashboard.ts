@@ -1,13 +1,13 @@
 import type { PromptComposition } from '@/types/api';
 import { defineStore } from 'pinia';
 
-export type BlockKey = 'character' | 'pose' | 'outfit' | 'scene' | 'lighting';
+export type BlockKey = 'character' | 'pose' | 'outfit' | 'scene' | 'lighting' | 'time';
 
-export const CANONICAL_BLOCK_ORDER: BlockKey[] = ['character', 'pose', 'outfit', 'scene', 'lighting'];
+export const CANONICAL_BLOCK_ORDER: BlockKey[] = ['character', 'pose', 'outfit', 'scene', 'time', 'lighting'];
 
 export const useDashboardStore = defineStore('dashboard', {
   state: () => ({
-    activeBlocks: ['character', 'pose', 'outfit', 'scene', 'lighting'] as BlockKey[],
+    activeBlocks: ['character', 'pose', 'outfit', 'scene', 'time', 'lighting'] as BlockKey[],
     uiOrder: [...CANONICAL_BLOCK_ORDER] as BlockKey[],
     targetModelHint: 'FLUX_1_DEV' as string,
     currentCompositionId: null as string | null,
