@@ -11,6 +11,7 @@ export const useSectionPrompt = () => {
       case 'outfit': return useOutfitStore().data as unknown as Record<string, unknown>;
       case 'scene': return useSceneStore().data as unknown as Record<string, unknown>;
       case 'lighting': return useLightingStore().data as unknown as Record<string, unknown>;
+      case 'time': return useTimeStore().data as unknown as Record<string, unknown>;
       default: return null;
     }
   };
