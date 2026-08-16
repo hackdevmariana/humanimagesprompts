@@ -7,7 +7,7 @@ const EMPTY_TIME_WEATHER = {
   weather: 'CLEAR',
 };
 
-export const useTimeWeatherStore = defineStore('timeWeather', {
+export const useTimeStore = defineStore('time', {
   state: () => ({
     data: { ...EMPTY_TIME_WEATHER } as TimeWeather,
     saved: [] as TimeWeather[],
