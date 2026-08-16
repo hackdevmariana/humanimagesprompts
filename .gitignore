@@ -1,0 +1,9 @@
+# Playwright MCP artifacts
+.playwright-mcp/
+dash2.md
+dash3.md
+dashboard-snapshot.md
+dashboard-final.png
+dashboard-iris-light.png
+dashboard-iris-fixed.png
+dashboard-iris-dark.png
