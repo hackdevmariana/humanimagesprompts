@@ -44,21 +44,6 @@
         />
       </div>
     </UiAccordion>
-
-    <UiAccordion title="Clima y atmósfera" :default-open="false">
-      <div class="grid grid-cols-2 gap-3 pt-1">
-        <UiSelect
-          v-model="data.weather_and_atmosphere.weather"
-          label="Clima"
-          :options="weatherOptions"
-        />
-        <UiSelect
-          v-model="data.weather_and_atmosphere.time_of_day"
-          label="Hora del día"
-          :options="timeOfDayOptions"
-        />
-      </div>
-    </UiAccordion>
   </div>
 </template>
 
@@ -107,22 +92,5 @@ const filmGrainOptions = [
   { value: 'MEDIUM_35MM', label: 'Medio 35mm' },
   { value: 'HEAVY_35MM', label: 'Intenso 35mm' },
   { value: 'VINTAGE_8MM', label: 'Vintage 8mm' },
-];
-
-const weatherOptions = [
-  { value: 'CLEAR', label: 'Despejado' },
-  { value: 'PARTLY_CLOUDY', label: 'Parcialmente nublado' },
-  { value: 'OVERCAST', label: 'Cubierto' },
-  { value: 'RAIN', label: 'Lluvia' },
-  { value: 'SNOW', label: 'Nieve' },
-  { value: 'FOG', label: 'Niebla' },
-];
-
-const timeOfDayOptions = [
-  { value: 'DAY', label: 'Día' },
-  { value: 'DUSK', label: 'Atardecer' },
-  { value: 'GOLDEN_HOUR', label: 'Hora dorada' },
-  { value: 'BLUE_HOUR', label: 'Hora azul' },
-  { value: 'NIGHT', label: 'Noche' },
 ];
 </script>
