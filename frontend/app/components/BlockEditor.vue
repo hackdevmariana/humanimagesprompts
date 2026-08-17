@@ -54,6 +54,15 @@
             <DiceIcon class="mr-1.5 h-3.5 w-3.5" />
             Carga aleatoria
           </UiButton>
+          <UiButton
+            variant="ghost"
+            size="sm"
+            title="Editar en profundidad"
+            @click="navigateToArea"
+          >
+            <ExpandIcon class="mr-1.5 h-3.5 w-3.5" />
+            Editar en profundidad
+          </UiButton>
         </div>
 
         <div
@@ -89,6 +98,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue';
+import { useRouter } from 'vue-router';
 import {
   PhDiceFive,
   PhFloppyDisk,
@@ -96,6 +106,7 @@ import {
   PhCopy,
   PhTerminal,
   PhDotsSixVertical,
+  PhArrowSquareOut,
 } from '@phosphor-icons/vue';
 import CharacterEditor from './editor/CharacterEditor.vue';
 import PoseEditor from './editor/PoseEditor.vue';
@@ -110,6 +121,9 @@ const LoadIcon = PhFolderOpen;
 const CopyIcon = PhCopy;
 const TerminalIcon = PhTerminal;
 const GripIcon = PhDotsSixVertical;
+const ExpandIcon = PhArrowSquareOut;
+
+const router = useRouter();
 
 const props = withDefaults(defineProps<{
   blockKey: string;
@@ -205,5 +219,9 @@ function copySectionPrompt() {
     navigator.clipboard.writeText(sectionPromptText.value);
     toast.success(`Prompt de ${blockLabel.value} copiado`);
   }
+}
+
+function navigateToArea() {
+  router.push(`/${props.blockKey}`);
 }
 </script>
