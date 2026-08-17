@@ -46,6 +46,17 @@ class PromptCompiler
                 }
             }
         }
+        if ($key === 'outfit') {
+            // Normalize garments[] to layers[] for backward compatibility with existing code
+            if (isset($block['garments']) && is_array($block['garments'])) {
+                $block['layers'] = array_map(function ($slot) {
+                    return [
+                        'layer' => $slot['slot_type'] ?? 'BASE_LAYER',
+                        'garment' => $slot['garment'] ?? [],
+                    ];
+                }, $block['garments']);
+            }
+        }
         return $block;
     }
 
@@ -172,19 +183,28 @@ class PromptCompiler
 
     private function outfitText(array $o): string
     {
-        $layers = $o['layers'] ?? [];
-        if (!is_array($layers) || $layers === []) {
-            $style = $this->label($o['style_category'] ?? 'CASUAL');
-            return "Dressed in a {$style} style.";
+        // Support both garments[] (new) and layers[] (legacy)
+        $garments = $o['garments'] ?? [];
+        if (!is_array($garments) || $garments === []) {
+            $layers = $o['layers'] ?? [];
+            if (!is_array($layers) || $layers === []) {
+                $style = $this->label($o['style_category'] ?? 'CASUAL');
+                return "Dressed in a {$style} style.";
+            }
+            // Fallback: convert legacy layers to garments format
+            $garments = array_map(function ($layer) {
+                return ['slot_type' => $layer['layer'] ?? 'BASE_LAYER', 'garment' => $layer['garment'] ?? []];
+            }, $layers);
         }
         $style = $this->label($o['style_category'] ?? 'CASUAL');
         $bits = [];
-        foreach ($layers as $layer) {
-            $g = $layer['garment'] ?? [];
+        foreach ($garments as $slot) {
+            $g = $slot['garment'] ?? [];
             $fabric = $g['fabric'] ?? [];
             $material = $this->label($fabric['material'] ?? 'COTTON');
             $weight = $this->label($fabric['weight'] ?? 'MEDIUM');
-            $name = $g['name'] ?? 'garment';
+            // Use EN label if present, fallback to name, then sub_category
+            $name = $g['label'] ?? $g['name'] ?? $g['sub_category'] ?? 'garment';
             $color = $this->colorText($g['primary_color'] ?? null);
             $pattern = isset($g['pattern']) ? $this->label($g['pattern']) : null;
             $fit = $this->label($g['fit'] ?? 'REGULAR');
@@ -321,6 +341,16 @@ class PromptCompiler
             'CASUAL' => 'casual', 'FORMAL' => 'formal', 'ATHLETIC' => 'athletic', 'TACTICAL' => 'tactical', 'PERIOD_COSTUME' => 'period costume',
             'TOP' => 'top', 'BOTTOM' => 'bottom', 'FULL_BODY' => 'full-body', 'FOOTWEAR' => 'footwear', 'HEADWEAR' => 'headwear', 'ACCESSORY' => 'accessory',
             'BASE_LAYER' => 'base layer', 'MID_LAYER' => 'mid layer', 'OUTER_LAYER' => 'outer layer',
+            // Garment sub-categories (EN labels for prompt)
+            'T_SHIRT' => 't-shirt', 'SHIRT' => 'shirt', 'BLOUSE' => 'blouse', 'SWEATER' => 'sweater', 'HOODIE' => 'hoodie',
+            'JEANS' => 'jeans', 'TROUSERS' => 'trousers', 'SHORTS' => 'shorts', 'SKIRT' => 'skirt', 'LEGGINGS' => 'leggings',
+            'JACKET' => 'jacket', 'COAT' => 'coat', 'BLAZER' => 'blazer', 'VEST' => 'vest', 'CARDIGAN' => 'cardigan',
+            'DRESS' => 'dress', 'JUMPSUIT' => 'jumpsuit', 'ROMPER' => 'romper',
+            'SNEAKERS' => 'sneakers', 'BOOTS' => 'boots', 'HEELS' => 'heels', 'LOAFERS' => 'loafers', 'SANDALS' => 'sandals',
+            'HAT' => 'hat', 'CAP' => 'cap', 'BEANIE' => 'beanie', 'SCARF' => 'scarf', 'GLOVES' => 'gloves',
+            'BELT' => 'belt', 'BAG' => 'bag', 'BACKPACK' => 'backpack', 'SUNGLASSES' => 'sunglasses', 'JEWELRY' => 'jewelry',
+            'LINGERIE' => 'lingerie', 'BRA' => 'bra', 'PANTIES' => 'panties', 'BODYSUIT' => 'bodysuit', 'CORSET' => 'corset',
+            'SWIMWEAR' => 'swimwear', 'BIKINI' => 'bikini', 'SWIM_TRUNKS' => 'swim trunks',
             'FRECKLES' => 'freckles', 'MOLES' => 'moles', 'SPARSE' => 'sparse', 'MODERATE' => 'moderate', 'DENSE' => 'dense',
             'MESOCEPHALIC' => 'mesocephalic', 'BRADYCEPHALIC' => 'broad', 'DYSTRICPHALIC' => 'long-faced',
             'OVAL' => 'oval', 'ROUND' => 'round', 'SQUARE' => 'square', 'HEART' => 'heart-shaped',
