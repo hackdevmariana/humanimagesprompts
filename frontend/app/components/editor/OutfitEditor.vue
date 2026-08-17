@@ -29,11 +29,21 @@
               :garment="slots[slot] as any"
               @update="u => outfit.setGarment(slot, u)"
             />
-            <div class="text-center text-xs text-stone-500 py-2">
+            <div v-else class="text-center text-xs text-stone-500 py-2">
               Sin prenda en este slot
             </div>
+            <UiButton
+              v-else
+              variant="ghost"
+              size="sm"
+              class="w-full"
+              @click="openPicker(slot)"
+            >
+              <HangerIcon class="h-3 w-3 mr-1" />
+              Catálogo
+            </UiButton>
           </div>
-          <div v-if="slots[slot]" class="flex items-end">
+          <div v-if="slots[slot]" class="flex items-end gap-1">
             <UiButton
               variant="ghost"
               size="sm"
@@ -45,16 +55,25 @@
         </div>
       </div>
     </UiAccordion>
+
+    <GarmentPicker
+      :isOpen="pickerOpen"
+      :slotType="pickerSlot"
+      @select="onGarmentSelected"
+      @close="closePicker"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue';
 import { storeToRefs } from 'pinia';
-import { PhX } from '@phosphor-icons/vue';
+import { PhX, PhTShirt } from '@phosphor-icons/vue';
 import GarmentEditor from './GarmentEditor.vue';
+import GarmentPicker from './GarmentPicker.vue';
 
 const XIcon = PhX;
+const HangerIcon = PhTShirt;
 
 const outfit = useOutfitStore();
 const { data } = storeToRefs(outfit);
@@ -86,6 +105,26 @@ const styleOptions = [
   { value: 'TACTICAL', label: 'Táctico' },
   { value: 'PERIOD_COSTUME', label: 'Traje época' },
 ];
+
+const pickerOpen = ref(false);
+const pickerSlot = ref('');
+
+function openPicker(slot: string) {
+  pickerSlot.value = slot;
+  pickerOpen.value = true;
+}
+
+function closePicker() {
+  pickerOpen.value = false;
+  pickerSlot.value = '';
+}
+
+function onGarmentSelected(garment: any) {
+  if (pickerSlot.value) {
+    outfit.setGarment(pickerSlot.value, garment);
+  }
+  closePicker();
+}
 
 function removeGarment(slot: string) {
   outfit.setGarment(slot, null);
