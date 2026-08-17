@@ -14,7 +14,7 @@
       <UiInput
         v-model="garment.sub_category"
         label="Subcategoría"
-        placeholder="Ej: Algodón"
+        placeholder="Ej: T_SHIRT"
       />
       <UiSelect
         v-model="garment.fit"
@@ -73,47 +73,57 @@ watch(garment, (v) => {
 }, { deep: true });
 
 const categoryOptions = [
-  { value: 'TOP', label: 'Superior' },
-  { value: 'BOTTOM', label: 'Inferior' },
-  { value: 'DRESS', label: 'Vestido' },
-  { value: 'OUTERWEAR', label: 'ABrigo' },
-  { value: 'SHOES', label: 'Calzado' },
+  { value: 'TOP', label: 'Superior (Top)' },
+  { value: 'BOTTOM', label: 'Inferior (Bottom)' },
+  { value: 'FULL_BODY', label: 'Cuerpo completo (Dress/Jumpsuit)' },
+  { value: 'FOOTWEAR', label: 'Calzado' },
+  { value: 'HEADWEAR', label: 'Accesorio cabeza' },
   { value: 'ACCESSORY', label: 'Accesorio' },
 ];
 
 const fitOptions = [
+  { value: 'SKINNY', label: 'Skinny' },
   { value: 'SLIM', label: 'Slim' },
   { value: 'REGULAR', label: 'Regular' },
-  { value: 'RELAXED', label: 'Relajado' },
-  { value: 'OVERSIZE', label: 'Oversize' },
-  { value: 'FORM_FITTING', label: 'Ajustado' },
+  { value: 'OVERSIZED', label: 'Oversized' },
+  { value: 'TAILORED', label: 'Tailored' },
 ];
 
 const patternOptions = [
   { value: 'SOLID', label: 'Sólido' },
   { value: 'STRIPED', label: 'Rayado' },
-  { value: 'CHECKERED', label: 'Cuadros' },
-  { value: 'FLORAL', label: 'Floral' },
-  { value: 'PAISLEY', label: 'Paisley' },
-  { value: 'LOGO', label: 'Logo' },
+  { value: 'PLAID', label: 'Cuadros (Plaid)' },
+  { value: 'CAMO', label: 'Camuflaje' },
+  { value: 'GRAPHIC_PRINT', label: 'Estampado gráfico' },
 ];
 
 const materialOptions = [
   { value: 'COTTON', label: 'Algodón' },
+  { value: 'LINEN', label: 'Lino' },
+  { value: 'LEATHER', label: 'Cuero' },
+  { value: 'DENIM', label: 'Denim' },
   { value: 'SILK', label: 'Seda' },
   { value: 'WOOL', label: 'Lana' },
-  { value: 'LINEN', label: 'Lino' },
-  { value: 'POLYESTER', label: 'Poliéster' },
   { value: 'NYLON', label: 'Nylon' },
-  { value: 'LEATHER', label: 'Cuero' },
+  { value: 'POLYESTER', label: 'Poliéster' },
+  { value: 'VISCOSE', label: 'Viscosa' },
+  { value: 'LACE', label: 'Encaje' },
+  { value: 'STRAW', label: 'Paja' },
+  { value: 'FELT', label: 'Fieltro' },
+  { value: 'ELASTANE', label: 'Elastano' },
+  { value: 'METAL', label: 'Metal' },
+  { value: 'GOLD', label: 'Oro' },
+  { value: 'SILVER', label: 'Plata' },
   { value: 'SATIN', label: 'Satén' },
   { value: 'CHIFFON', label: 'Chiffon' },
-  { value: 'DENIM', label: 'Jeans' },
+  { value: 'SUEDE', label: 'Ante' },
 ];
 
 const weaveOptions = [
-  { value: 'KNITTED', label: 'Tejido' },
-  { value: 'WOVEN', label: 'Trenzado' },
+  { value: 'KNITTED', label: 'Tejido de punto' },
+  { value: 'WOVEN', label: 'Tejido plano' },
+  { value: 'TWILL', label: 'Sarga (Twill)' },
+  { value: 'SATIN', label: 'Satén' },
 ];
 
 const weightOptions = [
@@ -124,7 +134,7 @@ const weightOptions = [
 
 const sheernessOptions = [
   { value: 'OPAQUE', label: 'Opaco' },
-  { value: ' SEMI_TRANSPARENT', label: 'Semitransparente' },
-  { value: 'TRANSPARENT', label: 'Transparente' },
+  { value: 'SEMI_TRANSPARENT', label: 'Semitransparente' },
+  { value: 'TRANSLUCENT', label: 'Translúcido' },
 ];
 </script>

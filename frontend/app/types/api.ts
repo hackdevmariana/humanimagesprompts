@@ -37,11 +37,11 @@ export type NailShapeEnum = 'ROUND' | 'OVAL' | 'SQUoval' | 'SQUARE' | 'SOFT_SQUA
 export type GarmentCategoryEnum = 'TOP' | 'BOTTOM' | 'FULL_BODY' | 'FOOTWEAR' | 'HEADWEAR' | 'ACCESSORY';
 export type GarmentFitEnum = 'SKINNY' | 'SLIM' | 'REGULAR' | 'OVERSIZED' | 'TAILORED';
 export type FabricMaterialEnum = 'COTTON' | 'LINEN' | 'LEATHER' | 'DENIM' | 'SILK' | 'WOOL' | 'NYLON' | 'LATEX' | 'CHIFFON' | 'SUEDE';
-export type WeaveTypeEnum = 'KNITTED' | 'WOVEN' | 'SATIIN' | 'TWILL';
-export type FabricWeightEnum = 'LIGHTWEIGHT' | 'MEDIUM_WEIGHT' | 'HEAVYWEIGHT';
-export type SheernessEnum = 'OPAQUE' | 'SEMI_TRANSPARENT' | 'SHEER';
+export type WeaveTypeEnum = 'KNITTED' | 'WOVEN' | 'TWILL' | 'SATIN';
+export type FabricWeightEnum = 'LIGHTWEIGHT' | 'MEDIUMWEIGHT' | 'HEAVYWEIGHT';
+export type SheernessEnum = 'OPAQUE' | 'SEMI_TRANSPARENT' | 'TRANSLUCENT';
 export type PatternEnum = 'SOLID' | 'STRIPED' | 'PLAID' | 'CAMO' | 'GRAPHIC_PRINT';
-export type LayerSlotEnum = 'BASE_LAYER' | 'MID_LAYER' | 'OUTER_LAYER' | 'FOOTWEAR' | 'HEADWEAR' | 'ACCESSORIES';
+export type LayerSlotEnum = 'BASE_LAYER' | 'MID_LAYER' | 'OUTER_LAYER' | 'FOOTWEAR' | 'HEADWEAR' | 'ACCESSORY';
 
 export type OutfitStyleEnum = 'CASUAL' | 'FORMAL' | 'ATHLETIC' | 'HIGH_FASHION' | 'TACTICAL' | 'PERIOD_COSTUME';
 

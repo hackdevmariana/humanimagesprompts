@@ -66,7 +66,7 @@ const slotTypes = [
   'OUTER_LAYER',
   'FOOTWEAR',
   'HEADWEAR',
-  'ACCESSORIES',
+  'ACCESSORY',
 ];
 
 const slotLabels: Record<string, string> = {
@@ -75,17 +75,16 @@ const slotLabels: Record<string, string> = {
   OUTER_LAYER: 'Capa exterior',
   FOOTWEAR: 'Calzado',
   HEADWEAR: 'Accesorios de cabeza',
-  ACCESSORIES: 'Accesorios',
+  ACCESSORY: 'Accesorios',
 };
 
 const styleOptions = [
   { value: 'CASUAL', label: 'Casual' },
   { value: 'FORMAL', label: 'Formal' },
-  { value: 'BUSINESS', label: 'Business' },
-  { value: 'ATHLEISURE', label: 'Atlético' },
-  { value: 'EVENING', label: 'Noche' },
-  { value: 'STREET', label: 'Street' },
-  { value: 'BOHEMIAN', label: 'Bohemio' },
+  { value: 'ATHLETIC', label: 'Atlético' },
+  { value: 'HIGH_FASHION', label: 'Alta costura' },
+  { value: 'TACTICAL', label: 'Táctico' },
+  { value: 'PERIOD_COSTUME', label: 'Traje época' },
 ];
 
 function removeGarment(slot: string) {
