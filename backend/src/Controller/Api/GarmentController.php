@@ -4,6 +4,7 @@ namespace App\Controller\Api;
 
 use App\Entity\Garment;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,7 +14,10 @@ class GarmentController extends AbstractController
 {
     use AssetCrudTrait;
 
-    public function __construct(private EntityManagerInterface $em) {}
+    public function __construct(
+        private EntityManagerInterface $em,
+        private LoggerInterface $logger
+    ) {}
 
     protected function entityClass(): string
     {
@@ -24,6 +28,17 @@ class GarmentController extends AbstractController
     {
         return 'name';
     }
+
+    /**
+     * Canonical tag namespaces and allowed values for validation.
+     */
+    private const TAG_TAXONOMY = [
+        'gender' => ['female', 'male', 'unisex'],
+        'season' => ['spring', 'summer', 'autumn', 'winter'],
+        'weather' => ['hot', 'warm', 'mild', 'cool', 'cold', 'rain', 'snow', 'wind'],
+        'occasion' => ['casual', 'formal', 'business', 'street', 'sport', 'elegant', 'beach', 'evening', 'period'],
+        'environment' => ['urban', 'nature', 'studio', 'indoor', 'outdoor'],
+    ];
 
     #[Route('/api/garments', name: 'api_garments_list', methods: ['GET'])]
     public function list(): JsonResponse
@@ -76,10 +91,34 @@ class GarmentController extends AbstractController
             $garment->setPattern($data['pattern'] ?? null);
         }
         if (array_key_exists('tags', $data)) {
-            $garment->setTags(is_array($data['tags']) ? $data['tags'] : []);
+            $tags = is_array($data['tags']) ? $data['tags'] : [];
+            $this->validateTags($tags);
+            $garment->setTags($tags);
         }
         if (array_key_exists('label', $data)) {
             $garment->setLabel($data['label'] ?? null);
+        }
+    }
+
+    /**
+     * Validates tags against canonical taxonomy. Logs warning for non-canonical tags.
+     * Does not block creation (soft validation).
+     */
+    private function validateTags(array $tags): void
+    {
+        foreach ($tags as $tag) {
+            if (!is_string($tag) || !str_contains($tag, ':')) {
+                $this->logger->warning('Garment tag malformed (expected namespace:value)', ['tag' => $tag]);
+                continue;
+            }
+            [$namespace, $value] = explode(':', $tag, 2);
+            if (!isset(self::TAG_TAXONOMY[$namespace])) {
+                $this->logger->warning('Garment tag namespace not recognized', ['namespace' => $namespace, 'tag' => $tag]);
+                continue;
+            }
+            if (!in_array($value, self::TAG_TAXONOMY[$namespace], true)) {
+                $this->logger->warning('Garment tag value not in canonical list', ['tag' => $tag, 'allowed' => self::TAG_TAXONOMY[$namespace]]);
+            }
         }
     }
 
