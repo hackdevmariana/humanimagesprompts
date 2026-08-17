@@ -38,6 +38,9 @@ class Garment
     #[ORM\Column(type: 'json', options: ['default' => '[]'])]
     private array $tags = [];
 
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $label = null;
+
     public function getName(): string
     {
         return $this->name;
@@ -134,6 +137,17 @@ class Garment
     public function setTags(array $tags): self
     {
         $this->tags = $tags;
+        return $this;
+    }
+
+    public function getLabel(): ?string
+    {
+        return $this->label;
+    }
+
+    public function setLabel(?string $label): self
+    {
+        $this->label = $label;
         return $this;
     }
 }
