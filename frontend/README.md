@@ -1,75 +1,51 @@
-# Nuxt Minimal Starter
+# HumanImagesPrompts — Frontend
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+This is the **Nuxt 4** frontend for the HumanImagesPrompts Engine.
 
-## Setup
+## 📖 Main Documentation
 
-Make sure to install dependencies:
+**See the root [`README.md`](../README.md) for complete setup, API reference, and deployment guide.**
+
+---
+
+## Quick Start / Inicio Rápido
 
 ```bash
-# npm
+# Install dependencies
 npm install
 
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
-```
-
-## Development Server
-
-Start the development server on `http://localhost:3000`:
-
-```bash
-# npm
+# Development server (port 3000, proxies /api to backend:8000)
 npm run dev
 
-# pnpm
-pnpm dev
+# Type checking
+npx nuxi typecheck
 
-# yarn
-yarn dev
-
-# bun
-bun run dev
-```
-
-## Production
-
-Build the application for production:
-
-```bash
-# npm
+# Production build
 npm run build
 
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
+# Preview production build
 npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
 ```
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+## Key Files / Archivos Clave
+
+| File | Purpose |
+|------|---------|
+| `nuxt.config.ts` | Nuxt config, API proxy, runtime config |
+| `app/composables/useApi.ts` | Typed API client (session auth) |
+| `app/stores/` | Pinia stores (characters, poses, outfits, scenes, lightings, time) |
+| `app/components/` | Vue components (editors, sidebar, block editors) |
+| `app/pages/` | Pages: login, dashboard, scene editor |
+
+## Tech Stack / Pila Tecnológica
+
+- **Nuxt 4** (Vue 3.5, SSR disabled → SPA)
+- **Pinia** (state management)
+- **Tailwind CSS 4** (styling)
+- **TypeScript strict**
+- **@phosphor-icons/vue** (icons)
+- **vue-draggable-next** (drag & drop)
+
+---
+
+**Root docs:** [`../README.md`](../README.md) | **Domain docs:** [`../docs/domain/`](../docs/domain/)
