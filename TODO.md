@@ -35,3 +35,7 @@ Orden de trabajo. Marco la casilla cuando esté hecho. Commits: uno por fichero.
 - [x] 5.2 `php bin/phpunit` en verde (CRUD TimeWeather + compilación `time`)
 - [x] 5.3 `npx nuxi typecheck` sin errores
 - [x] 5.4 Smoke test Playwright: login → activar Tiempo → "Carga aleatoria" rellena 3 campos → "Crear prompt" caja inline → copiar toastea → Guardar/Cargar asset → compile global incluye Tiempo tras Escenario y excluye clima de Escenario
+
+## 6. Documentación
+- [x] 6.1 Crear `README.md` bilingüe (ES/EN) en raíz: intro, stack, requisitos, setup dev, API, compilación, tests, despliegue prod, docs, OpenSpec, estructura
+- [x] 6.2 Reemplazar `frontend/README.md` por guía breve apuntando a raíz
