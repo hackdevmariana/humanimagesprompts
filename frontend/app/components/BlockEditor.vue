@@ -127,7 +127,7 @@ const sectionLoading = ref(false);
 const sectionPromptText = ref('');
 const sectionEmptyMessage = ref('');
 
-const supportsRandom = computed(() => props.blockKey !== 'outfit');
+const supportsRandom = computed(() => true);
 
 function getStore() {
   switch (props.blockKey) {
