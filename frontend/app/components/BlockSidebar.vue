@@ -24,6 +24,14 @@
         @update:model-value="toggleBlock(block.key)"
         class="ml-auto"
       />
+      <button
+        @click.stop="navigateToArea(block.key)"
+        class="ml-1 p-1 rounded text-stone-400 hover:text-stone-600 hover:bg-stone-100 dark:hover:bg-stone-800"
+        title="Editar en profundidad"
+        aria-label="Editar {{ block.label }} en profundidad"
+      >
+        <ArrowSquareOutIcon class="h-4 w-4" />
+      </button>
     </button>
 
     <div class="mt-4 border-t border-stone-200 pt-3 dark:border-stone-800">
@@ -46,10 +54,12 @@ import {
   PhFilmSlate,
   PhSunDim,
   PhClock,
+  PhArrowSquareOut,
 } from '@phosphor-icons/vue';
 
 const dashboard = useDashboardStore();
 const { activeBlocks, targetModelHint } = storeToRefs(dashboard);
+const router = useRouter();
 
 const UserCircleIcon = PhUserCircle;
 const LightningIcon = PhLightning;
@@ -85,5 +95,9 @@ function isActive(key: string) {
 
 function toggleBlock(key: string) {
   dashboard.toggleBlock(key as any);
+}
+
+function navigateToArea(key: string) {
+  router.push(`/${key}`);
 }
 </script>
