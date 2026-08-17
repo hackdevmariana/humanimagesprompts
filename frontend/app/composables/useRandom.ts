@@ -1,5 +1,6 @@
 import type { BlockKey } from '@/stores/dashboard';
-import type { Character, Lighting, Pose, Scene, TimeWeather } from '@/types/api';
+import type { Character, Garment, Lighting, Outfit, Pose, Scene, TimeWeather } from '@/types/api';
+import { useGarmentStore } from '@/stores/garment';
 
 const pick = <T,>(arr: readonly T[]): T => arr[Math.floor(Math.random() * arr.length)] as T;
 
@@ -210,6 +211,116 @@ function randomTime(): TimeWeather {
   };
 }
 
+/**
+ * Generates a contextual outfit based on character gender, time/weather, and scene environment.
+ * Pure function for testability.
+ */
+export function generateOutfit(
+  garments: readonly any[],
+  context: {
+    genderTag: string;
+    seasonTag: string;
+    weatherTag: string;
+    environmentTag: string;
+  }
+): { name: string; style_category: string; garments: Array<{ slot_type: string; garment: any }> } {
+  const slotOrder = ['BASE_LAYER', 'MID_LAYER', 'OUTER_LAYER', 'FOOTWEAR', 'HEADWEAR', 'ACCESSORY'] as const;
+
+  // Build tag filters from context
+  const contextTags = [
+    context.genderTag,
+    context.seasonTag,
+    context.weatherTag,
+    context.environmentTag,
+  ].filter(Boolean);
+
+  // Slot to category mapping
+  const slotToCategory: Record<string, string[]> = {
+    BASE_LAYER: ['TOP', 'BOTTOM', 'FULL_BODY'],
+    MID_LAYER: ['TOP'],
+    OUTER_LAYER: ['TOP'],
+    FOOTWEAR: ['FOOTWEAR'],
+    HEADWEAR: ['HEADWEAR'],
+    ACCESSORY: ['ACCESSORY'],
+  };
+
+  const selectedGarments: Array<{ slot_type: string; garment: any }> = [];
+  const usedGarmentIds = new Set<string>();
+
+  // Track if we picked a FULL_BODY in base layer
+  let hasFullBodyInBase = false;
+
+  for (const slotType of slotOrder) {
+    const allowedCategories = slotToCategory[slotType] || [];
+
+    // Filter candidates: category match + tag match (AND logic)
+    let candidates = garments.filter((g: any) => {
+      if (!allowedCategories.includes(g.category)) return false;
+      if (usedGarmentIds.has(g.id)) return false;
+
+      // Tag filtering: require ALL context tags to be present on garment
+      const garmentTags = g.tags || [];
+      return contextTags.every((tag) => garmentTags.includes(tag));
+    });
+
+    // Fallback: if no tagged candidates, use any garment of the right category
+    if (candidates.length === 0) {
+      candidates = garments.filter(
+        (g: any) => allowedCategories.includes(g.category) && !usedGarmentIds.has(g.id)
+      );
+    }
+
+    if (candidates.length === 0) {
+      // No garments available for this slot
+      continue;
+    }
+
+    // Pick one at random
+    const picked = pick(candidates);
+    usedGarmentIds.add(picked.id);
+
+    // Check for FULL_BODY conflict in base layer
+    if (slotType === 'BASE_LAYER' && picked.category === 'FULL_BODY') {
+      hasFullBodyInBase = true;
+    }
+
+    // If we have a FULL_BODY in base, skip MID_LAYER and OUTER_LAYER if they would be TOP/BOTTOM
+    // (This is handled by the slot order - we just won't pick for those slots if hasFullBodyInBase)
+
+    selectedGarments.push({
+      slot_type: slotType,
+      garment: picked,
+    });
+  }
+
+  // Determine style_category from predominant occasion tags
+  const occasionCounts: Record<string, number> = {};
+  for (const sg of selectedGarments) {
+    const tags = sg.garment.tags || [];
+    for (const tag of tags) {
+      if (tag.startsWith('occasion:')) {
+        const occ = tag.split(':')[1];
+        occasionCounts[occ] = (occasionCounts[occ] || 0) + 1;
+      }
+    }
+  }
+
+  let styleCategory = 'CASUAL';
+  if (occasionCounts['formal'] || occasionCounts['evening']) styleCategory = 'FORMAL';
+  else if (occasionCounts['business']) styleCategory = 'FORMAL';
+  else if (occasionCounts['street'] || occasionCounts['sport']) styleCategory = 'ATHLETIC';
+  else if (occasionCounts['elegant']) styleCategory = 'HIGH_FASHION';
+  else if (occasionCounts['period']) styleCategory = 'PERIOD_COSTUME';
+
+  const name = `Outfit ${styleCategory} ${Date.now().toString().slice(-4)}`;
+
+  return {
+    name,
+    style_category: styleCategory,
+    garments: selectedGarments,
+  };
+}
+
 export const useRandom = () => {
   function randomize(blockKey: BlockKey) {
     switch (blockKey) {
@@ -238,8 +349,65 @@ export const useRandom = () => {
         store.data = randomTime();
         break;
       }
-      case 'outfit':
+      case 'outfit': {
+        const garmentStore = useGarmentStore();
+        const characterStore = useCharacterStore();
+        const timeStore = useTimeStore();
+        const sceneStore = useSceneStore();
+
+        // Ensure garment catalog is loaded
+        if (garmentStore.catalog.length === 0) {
+          garmentStore.fetchAll();
+        }
+
+        const gender = characterStore.data.gender || 'FEMALE';
+        const genderTag = gender === 'FEMALE' ? 'gender:female' : gender === 'MALE' ? 'gender:male' : 'gender:unisex';
+        const seasonTag = `season:${(timeStore.data.season || 'SPRING').toLowerCase()}`;
+        const weather = timeStore.data.weather || 'CLEAR';
+        const weatherTagMap: Record<string, string> = {
+          SUNNY: 'weather:hot',
+          CLEAR: 'weather:warm',
+          PARTLY_CLOUDY: 'weather:mild',
+          CLOUDY: 'weather:cool',
+          OVERCAST: 'weather:cool',
+          RAINY: 'weather:rain',
+          DRIZZLY: 'weather:rain',
+          STORMY: 'weather:rain',
+          SNOWY: 'weather:snow',
+          SLEET: 'weather:cold',
+          HAIL: 'weather:cold',
+          FOGGY: 'weather:cool',
+          MISTY: 'weather:cool',
+          WINDY: 'weather:wind',
+          GUSTY: 'weather:wind',
+          ICY: 'weather:cold',
+          COLD: 'weather:cold',
+          COOL: 'weather:cool',
+          MILD: 'weather:mild',
+          HOT: 'weather:hot',
+          VERY_HOT: 'weather:hot',
+          THUNDERSTORM: 'weather:rain',
+        };
+        const weatherTag = weatherTagMap[weather] || 'weather:mild';
+        const environmentTag = `environment:${(sceneStore.data.environment_type || 'URBAN').toLowerCase()}`;
+
+        const outfitData = generateOutfit(garmentStore.catalog, {
+          genderTag,
+          seasonTag,
+          weatherTag,
+          environmentTag,
+        });
+
+        // Apply to outfit store
+        const outfitStore = useOutfitStore();
+        outfitStore.data = {
+          ...outfitStore.data,
+          name: outfitData.name,
+          style_category: outfitData.style_category,
+          garments: outfitData.garments,
+        };
         break;
+      }
     }
   }
 
