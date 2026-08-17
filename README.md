@@ -302,7 +302,9 @@ humanimagesprompts/
 
 ## 📄 License / Licencia
 
-Proprietary / Private project. All rights reserved.
+Apache License 2.0 — see [`LICENSE`](LICENSE) for full text.
+
+Copyright 2026 Aton Soluciones Tecnológicas, SL.
 
 ---
 
