@@ -357,4 +357,47 @@ class PromptCompilerTest extends TestCase
         $this->assertStringContainsString('25-year-old Caucasian woman', $text);
         $this->assertStringContainsString('studio scene', $text);
     }
+
+    public function testCompileWithLightingBlock(): void
+    {
+        $composition = [
+            'character' => ['gender' => 'FEMALE', 'age' => 25, 'ethnicity' => 'CAUCASIAN'],
+            'outfit' => ['style_category' => 'CASUAL', 'layers' => []],
+            'pose' => ['category' => 'STANDING', 'body_language' => 'Standing', 'facial_expression' => 'NEUTRAL', 'expression_intensity' => 5, 'required_framing' => 'MEDIUM_SHOT'],
+            'scene' => ['environment_type' => 'STUDIO', 'location_details' => 'Studio'],
+            'lighting' => [
+                'setup_type' => 'BLUE_HOUR',
+                'color_temperature' => 'NEUTRAL_4500K',
+                'key_light_direction' => 'SIDE_90',
+                'hardness' => 'SEMI_SOFT',
+                'modifiers' => ['diffusion' => 'softbox'],
+            ],
+        ];
+
+        $result = $this->compiler->compile($composition, 'test-composition-id', 'FLUX_1_DEV');
+
+        $this->assertArrayHasKey('lighting', $result['canonical']);
+        $this->assertEquals('BLUE_HOUR', $result['canonical']['lighting']['setup_type']);
+        $this->assertStringContainsString('Lighting:', $result['compiled_text']);
+        $this->assertStringContainsString('blue hour lighting', $result['compiled_text']);
+        $this->assertStringContainsString('neutral 4500k color temp', $result['compiled_text']);
+        $this->assertStringContainsString('side 90 key', $result['compiled_text']);
+        $this->assertStringContainsString('semi-soft', $result['compiled_text']);
+        $this->assertStringContainsString('mods: diffusion: Softbox', $result['compiled_text']);
+    }
+
+    public function testCompileOmitsLightingWhenAbsent(): void
+    {
+        $composition = [
+            'character' => ['gender' => 'FEMALE', 'age' => 25, 'ethnicity' => 'CAUCASIAN'],
+            'outfit' => ['style_category' => 'CASUAL', 'layers' => []],
+            'pose' => ['category' => 'STANDING', 'body_language' => 'Standing', 'facial_expression' => 'NEUTRAL', 'expression_intensity' => 5, 'required_framing' => 'MEDIUM_SHOT'],
+            'scene' => ['environment_type' => 'URBAN', 'location_details' => 'City street'],
+        ];
+
+        $result = $this->compiler->compile($composition, 'test-composition-id', 'FLUX_1_DEV');
+
+        $this->assertArrayNotHasKey('lighting', $result['canonical']);
+        $this->assertStringNotContainsString('Lighting:', $result['compiled_text']);
+    }
 }

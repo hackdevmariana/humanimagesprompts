@@ -29,7 +29,7 @@ class PromptCompiler
     private function normalizeCanonical(array $composition): array
     {
         $canonical = [];
-        foreach (['character', 'outfit', 'pose', 'scene', 'time'] as $key) {
+        foreach (['character', 'outfit', 'pose', 'scene', 'time', 'lighting'] as $key) {
             if (isset($composition[$key])) {
                 $canonical[$key] = $this->normalizeBlock($key, $composition[$key]);
             }
@@ -106,6 +106,9 @@ class PromptCompiler
         }
         if (isset($canonical['time'])) {
             $parts[] = $this->timeText($canonical['time']);
+        }
+        if (isset($canonical['lighting'])) {
+            $parts[] = $this->lightingText($canonical['lighting']);
         }
 
         return trim(implode(' ', $parts) . ' ' . $this->modelTail($target));
@@ -272,6 +275,23 @@ class PromptCompiler
         return "Time: {$season}, {$timeOfDay}, {$weather} day.";
     }
 
+    private function lightingText(array $l): string
+    {
+        $setup = $this->label($l['setup_type'] ?? 'GOLDEN_HOUR');
+        $temp = $this->label($l['color_temperature'] ?? 'DAYLIGHT');
+        $dir = $this->label($l['key_light_direction'] ?? 'FRONT');
+        $hard = $this->label($l['hardness'] ?? 'SOFT_DIFFUSED');
+        $bits = ["{$setup} lighting", "{$temp} color temp", "{$dir} key", "{$hard}"];
+        if (!empty($l['modifiers']) && is_array($l['modifiers'])) {
+            $mods = [];
+            foreach ($l['modifiers'] as $k => $v) {
+                $mods[] = "{$k}: {$this->label((string) $v)}";
+            }
+            $bits[] = 'mods: ' . implode(', ', $mods);
+        }
+        return 'Lighting: ' . implode(', ', $bits) . '.';
+    }
+
     private function colorText(?array $palette): string
     {
         if (!$palette) {
@@ -334,6 +354,11 @@ class PromptCompiler
             'DAYLIGHT' => 'daylight', 'WARM_2700K' => 'warm 2700K', 'COOL_5600K' => 'cool 5600K',
             'FRONT' => 'front', 'SIDE_45' => 'side 45', 'BACK' => 'back',
             'SOFT_DIFFUSED' => 'soft diffused', 'HARD' => 'hard',
+            // Lighting: additional enums from LightingEditor
+            'BLUE_HOUR' => 'blue hour', 'STUDIO_HARSHELL' => 'studio hard light', 'WINDOW_LIGHT' => 'window light', 'NEON' => 'neon', 'CANDLELIGHT' => 'candlelight',
+            'WARM_3200K' => 'warm 3200k', 'NEUTRAL_4500K' => 'neutral 4500k', 'COOL_7000K' => 'cool 7000k',
+            'SIDE_90' => 'side 90', 'BACK_45' => 'back 45', 'OVERHEAD' => 'overhead', 'UNDER' => 'under',
+            'SEMI_SOFT' => 'semi-soft', 'HARD_SHADOW' => 'hard shadow', 'CONTRAST' => 'high contrast',
             'LENS_85MM_PORTRAIT' => '85mm portrait', 'LENS_50MM' => '50mm', 'LENS_35MM' => '35mm',
             'F_1_2' => 'f/1.2', 'F_1_4' => 'f/1.4', 'F_1_8' => 'f/1.8', 'F_2_8' => 'f/2.8', 'F_4' => 'f/4',
             'SHALLOW_BOKEH' => 'shallow depth of field, creamy bokeh', 'DEEP' => 'deep focus',
