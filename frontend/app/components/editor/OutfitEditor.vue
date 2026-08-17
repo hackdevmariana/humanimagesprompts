@@ -29,19 +29,18 @@
               :garment="slots[slot] as any"
               @update="u => outfit.setGarment(slot, u)"
             />
-            <div v-else class="text-center text-xs text-stone-500 py-2">
-              Sin prenda en este slot
+            <div v-else class="space-y-2">
+              <div class="text-center text-xs text-stone-500 py-2">Sin prenda en este slot</div>
+              <UiButton
+                variant="ghost"
+                size="sm"
+                class="w-full"
+                @click="openPicker(slot)"
+              >
+                <HangerIcon class="h-3 w-3 mr-1" />
+                Catálogo
+              </UiButton>
             </div>
-            <UiButton
-              v-else
-              variant="ghost"
-              size="sm"
-              class="w-full"
-              @click="openPicker(slot)"
-            >
-              <HangerIcon class="h-3 w-3 mr-1" />
-              Catálogo
-            </UiButton>
           </div>
           <div v-if="slots[slot]" class="flex items-end gap-1">
             <UiButton
